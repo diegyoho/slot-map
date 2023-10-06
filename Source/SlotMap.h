@@ -3,11 +3,11 @@
 #include <array>
 #include <vector>
 
+typedef unsigned long long ObjectId;
+
 template <typename T, size_t N = 256>
 class SlotMap
 {
-    typedef unsigned long long ObjectId;
-
     struct Object
     {
         ObjectId id;
@@ -42,5 +42,10 @@ public:
 
         _objectTable[free / _chunkSize][free % _chunkSize].object = object;
         return _objectTable[free / _chunkSize][free % _chunkSize].id = free;
+    }
+
+    T* GetObject(const ObjectId& id) {
+        Object obj = _objectTable[(id & 0xFFFFFFFF) / _chunkSize][((id & 0xFFFFFFFF) % _chunkSize)];
+        return obj.id != id ? nullptr : &obj.object;
     }
 };
