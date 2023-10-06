@@ -12,17 +12,30 @@ namespace SM
     {
         struct Object
         {
-            ObjectId id;
-            T value;
+            ObjectId id{};
+            T value{};
         };
 
         const size_t _chunkSize;
         std::vector<std::array<Object, N>> _objectTable;
         std::vector<unsigned int> _freeIndices;
 
-    public:
-        SlotMap() : _chunkSize{ N }, _objectTable{}, _freeIndices{}
+        void AddChunck()
         {
+            _objectTable.push_back({});
+
+            for (int i = _chunkSize - 1; i >= 0; --i) {
+                _freeIndices.push_back((_objectTable.size() - 1) * _chunkSize + i);
+            }
+        }
+
+    public:
+        SlotMap(const bool& initializeWithChunk = false) : _chunkSize{ N }, _objectTable{}, _freeIndices{}
+        {
+            if (initializeWithChunk)
+            {
+                AddChunck();
+            }
         }
 
         ~SlotMap() = default;
@@ -31,11 +44,7 @@ namespace SM
         {
             if (_freeIndices.empty())
             {
-                _objectTable.push_back({});
-
-                for (int i = _chunkSize - 1; i >= 0; --i) {
-                    _freeIndices.push_back((_objectTable.size() - 1) * _chunkSize + i);
-                }
+                AddChunck();
             }
 
             int free = _freeIndices.back();
