@@ -11,9 +11,9 @@ int main()
 	{
 		std::cout << "Simple Slot Map implementation." << std::endl;
 
-		SlotMap<std::shared_ptr<int>> sm;
+		SM::SlotMap<std::shared_ptr<int>> sm;
 		
-		ObjectId id{};
+		SM::ObjectId id{};
 		
 		for (size_t i = 0; i < 5; ++i)
 		{
