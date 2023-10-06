@@ -21,12 +21,17 @@ int main()
 		}
 
 		std::cout << "Last ID inserted into the Slot Map: " << id << std::endl;
+		
+		sm.DestroyObject(1);
+		sm.DestroyObject(3);
+		sm.Insert(std::make_shared<int>(2342));
+		sm.Insert(std::make_shared<int>(456));
 
 		for (size_t i = 0; i <= id + 1; ++i)
 		{
 			if (auto valid = sm.GetObject(i))
 			{
-				std::shared_ptr<int> value = *valid;
+				std::shared_ptr<int> value = valid->value;
 				std::cout << "Value at ID(" << i << "): " << *value << std::endl;
 			}
 			else

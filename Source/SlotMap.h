@@ -45,9 +45,19 @@ namespace SM
             return _objectTable[free / _chunkSize][free % _chunkSize].id = free;
         }
 
-        T* GetObject(const ObjectId& id) {
-            Object obj = _objectTable[(id & 0xFFFFFFFF) / _chunkSize][((id & 0xFFFFFFFF) % _chunkSize)];
-            return obj.id != id ? nullptr : &obj.value;
+        const Object* GetObject(const ObjectId& id) const {
+            const Object& obj = _objectTable[(id & 0xFFFFFFFF) / _chunkSize][((id & 0xFFFFFFFF) % _chunkSize)];
+            return obj.id != id ? nullptr : &obj;
+        }
+
+        void DestroyObject(const ObjectId& id) {
+            if (const Object* objPtr = GetObject(id)) {
+                Object& obj = const_cast<Object&>(*objPtr);
+                obj.id = (obj.id & 0xFFFFFFFF) | (((obj.id >> 32) + 1) << 32);
+                obj.value = T{};
+
+                _freeIndices.push_back(id & 0xFFFFFFFF);
+            }
         }
     };
 }
